@@ -72,7 +72,7 @@ namespace CodeCanvas.HostedServices
 
                     if (ratesDatabase.Count() == 0)
                     {
-                        scopedRepositoryService.AddRates(ratesToAdd.Where(x => x.CurrencyCode != null).ToList());
+                        scopedRepositoryService.AddRates(ratesToAdd.Where(x => x.CurrencyCode != null ).ToList()); //&& x.CreatedAt == DateTime.Today
                     }
                     else
                     {
@@ -81,11 +81,8 @@ namespace CodeCanvas.HostedServices
                         {
                             foreach(var rateB in ratesToAdd)
                             {
-                                if (rateA.CurrencyCode != null && rateA.CurrencyCode.Equals(rateB.CurrencyCode))
-                                {
-
+                                if(rateA.CurrencyCode != null && rateA.CurrencyCode.Equals(rateB.CurrencyCode))
                                     rateA.Update(rateB.Rate);
-                                }
                             }
                         }
 

@@ -23,8 +23,8 @@ namespace CodeCanvas.ExchangeRateStrategies
 
         protected override async Task<decimal> GetRate(string currencyCodeFrom, string currencyCodeTo, DateTime date)
         {
-            var rateFrom = await _repository.GetRateByCondition(DateTime.Today.AddDays(3), currencyCodeFrom);
-            var rateTo = await _repository.GetRateByCondition(DateTime.Today.AddDays(3), currencyCodeTo);
+            var rateFrom = await _repository.GetRateByCondition(date, currencyCodeFrom); //DateTime.Today.AddDays(3)
+            var rateTo = await _repository.GetRateByCondition(date, currencyCodeTo);
             
             if (rateFrom ==null || rateTo ==null)
             {

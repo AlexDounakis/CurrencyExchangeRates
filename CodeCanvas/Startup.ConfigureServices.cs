@@ -32,8 +32,7 @@ namespace CodeCanvas
 
 			// todo: register UpdateRatesHostedService
 			services.AddHostedService<UpdateRatesHostedService>();
-			//services.AddScoped<>();
-
+			
 			services.AddAutoMapper(typeof(Program));
 			services.AddScoped<IRatesRepository,RatesRepository>();
 
