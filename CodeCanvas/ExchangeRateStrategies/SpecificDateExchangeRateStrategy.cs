@@ -24,18 +24,16 @@ namespace CodeCanvas.ExchangeRateStrategies
 
         protected override async Task<decimal> GetRate(string currencyCodeFrom, string currencyCodeTo, DateTime date)
         {
-            var ratesByDay = await _repository.GetRatesByCondition(date, currencyCodeFrom);
-            if (ratesByDay.Count() == 0)
+            var rateFrom = await _repository.GetRateByCondition(date, currencyCodeFrom);
+            if (rateFrom == null)
                 throw new Exception("Rate For Specific Date Not Found...");  //return 404
 
-            // specific rate
-            var rate = ratesByDay.Where(x => x.Rate.Equals(currencyCodeFrom)).FirstOrDefault();
+            var rateTo = await _repository.GetRateByCondition(date, currencyCodeTo);
+            if (rateTo == null)
+                throw new Exception("Rate For Specific Date Not Found...");  //return 404
 
-            //var rateToReturn = _mapper.Map<CurrencyRateEntity, CurrencyRateModel>(rate);
-            if (rate != null)
-                return rate.Rate;
-            else
-                throw new Exception("rate to return == null");
+            var finalRate = System.Convert.ToDecimal(rateTo.Rate / rateFrom.Rate);
+            return finalRate;
         }
     }
 }

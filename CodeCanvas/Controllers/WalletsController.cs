@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
+using AutoMapper;
+using CodeCanvas.Contracts;
 using CodeCanvas.Models;
 using CodeCanvas.Services;
 using Microsoft.AspNetCore.Http;
@@ -14,10 +16,23 @@ namespace CodeCanvas.Controllers
 	{
 		private readonly ILogger<WalletsController> _logger;
 		private readonly IWalletAdjustmentService _walletAdjustmentService;
-		public WalletsController(ILogger<WalletsController> logger , IWalletAdjustmentService wallet)
+		private readonly IWalletRepository _walletRepository;
+		private readonly IMapper _mapper;
+
+
+        public WalletsController(ILogger<WalletsController> logger , IWalletAdjustmentService wallet , IWalletRepository walletRepository ,IMapper mapper)
 		{
 			_logger = logger;
             _walletAdjustmentService = wallet;
+			_walletRepository = walletRepository;
+			_mapper = mapper;
+		}
+		[HttpGet]
+		public async Task<IActionResult> GetWallet()
+		{
+			var wallet = await _walletRepository.GetWalletAsync();
+
+			return Ok();
 		}
 
 		[HttpPost]

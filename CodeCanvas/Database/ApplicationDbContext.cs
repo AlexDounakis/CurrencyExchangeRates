@@ -1,4 +1,6 @@
 ﻿#nullable disable
+using System;
+using System.Data.Common;
 using System.Reflection;
 using CodeCanvas.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +18,7 @@ namespace CodeCanvas.Database
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
+			builder.Entity<WalletEntity>().HasData(new WalletEntity(1, "USD", System.Convert.ToDecimal(0) , DateTime.Today , DateTime.Today)) ;
 			builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 			base.OnModelCreating(builder);
 		}

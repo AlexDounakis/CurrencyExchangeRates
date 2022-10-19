@@ -11,7 +11,7 @@ namespace CodeCanvas.Entities
 		/// <summary>
 		///  currency of the wallet
 		/// </summary>
-		public string CurrencyCode { get; }
+		public string CurrencyCode { get; private set; }
 		/// <summary>
 		/// available balance of the wallet
 		/// </summary>
@@ -19,7 +19,7 @@ namespace CodeCanvas.Entities
 		/// <summary>
 		/// creation date of the wallet
 		/// </summary>
-		public DateTime CreatedAt { get; }
+		public DateTime CreatedAt { get;  }
 		/// <summary>
 		/// date of the last update of the wallet
 		/// </summary>
@@ -33,7 +33,6 @@ namespace CodeCanvas.Entities
 			CreatedAt = createdAt;
 			UpdatedAt = updatedAt;
 		}
-
 		public void Adjust(decimal amount)
 		{
 			if (Balance + amount < 0)

@@ -19,7 +19,7 @@ namespace CodeCanvas.Entities
 		/// <summary>
 		/// creation date of the Currency
 		/// </summary>
-		public DateTime CreatedAt { get; }
+		public DateTime CreatedAt { get; set; }
 		/// <summary>
 		/// date of the last update of the Currency
 		/// </summary>
@@ -35,7 +35,7 @@ namespace CodeCanvas.Entities
 		}
 		public CurrencyRateEntity()
 		{
-			CreatedAt = DateTime.Today;
+			//CreatedAt = DateTime.Today;
 		}
 		public void Update(decimal rate)
 		{

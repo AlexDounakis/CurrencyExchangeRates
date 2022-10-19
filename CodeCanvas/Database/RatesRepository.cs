@@ -21,6 +21,11 @@ namespace CodeCanvas.Database
         }
 
         public async Task<IEnumerable<CurrencyRateEntity>> GetRatesAsync() => await FindAll().ToListAsync();
+        public async Task<IEnumerable<CurrencyRateEntity>> GetNextAvailableRateAsync() =>  FindAll().OrderByDescending(x => x.CreatedAt);
+        public async Task<CurrencyRateEntity> GetRateByCondition(DateTime date, string currencyCode)
+        {
+            return await FindByCondition(c => c.CreatedAt.Date == date.Date && c.CurrencyCode == currencyCode).FirstOrDefaultAsync();
+        }
         public async Task<IEnumerable<CurrencyRateEntity>> GetRatesByCondition(DateTime date)
         {
             return await FindByCondition(c =>  c.CreatedAt.Date == date.Date).ToListAsync();

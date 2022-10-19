@@ -14,7 +14,7 @@ namespace CodeCanvas.Database.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "5.0.14");
+                .HasAnnotation("ProductVersion", "5.0.17");
 
             modelBuilder.Entity("CodeCanvas.Entities.CurrencyRateEntity", b =>
                 {
@@ -62,6 +62,16 @@ namespace CodeCanvas.Database.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Wallets");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Balance = 0m,
+                            CreatedAt = new DateTime(2022, 10, 19, 0, 0, 0, 0, DateTimeKind.Local),
+                            CurrencyCode = "USD",
+                            UpdatedAt = new DateTime(2022, 10, 19, 0, 0, 0, 0, DateTimeKind.Local)
+                        });
                 });
 #pragma warning restore 612, 618
         }

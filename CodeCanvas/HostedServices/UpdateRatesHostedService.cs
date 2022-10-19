@@ -64,11 +64,11 @@ namespace CodeCanvas.HostedServices
 
                 var ratesDaily = await _client.GetRates();
                 var ratesDatabase = await scopedRepositoryService.GetRatesByCondition(DateTime.Today);
-                var ratesTesting = await scopedRepositoryService.GetRatesAsync();
+                //var ratesTesting = await scopedRepositoryService.GetRatesAsync();
                 if (ratesDaily.Rates != null)
                 {
                     var ratesToAdd = _mapper.Map<IEnumerable<EuropeanCentralBank.CurrencyRate>, IEnumerable<CurrencyRateEntity>>(ratesDaily.Rates);
-
+                    ratesToAdd.ToList().ForEach(x => x.CreatedAt = (DateTime)ratesDaily.Date);
 
                     if (ratesDatabase.Count() == 0)
                     {
@@ -77,23 +77,20 @@ namespace CodeCanvas.HostedServices
                     else
                     {
                         // Update entity  Entity.Update(ratesToAdd.Rate)
-
-
-
-                        ratesDatabase
-                            .ToList()
-                            .ForEach(x =>
+                        foreach(var rateA in ratesDatabase)
+                        {
+                            foreach(var rateB in ratesToAdd)
                             {
-                                var record = ratesDatabase.First(y => ratesToAdd.Any(rate => rate.CurrencyCode != null && rate.CurrencyCode == y.CurrencyCode));
-                                x.Update(record.Rate);
-                            });
+                                if (rateA.CurrencyCode != null && rateA.CurrencyCode.Equals(rateB.CurrencyCode))
+                                {
+
+                                    rateA.Update(rateB.Rate);
+                                }
+                            }
+                        }
 
                         // Update Database
-                        scopedRepositoryService.UpdateRates(
-                            ratesDatabase.Where(x => ratesToAdd.Any(y => y != null
-                                                                      && y.CurrencyCode != null
-                                                                      && y.CurrencyCode.Equals(x.CurrencyCode))));
-
+                        scopedRepositoryService.UpdateRates(ratesDatabase);
                     }
                     scopedRepositoryService.SaveChangesAsync();
                     //_logger.LogInformation("UpdateRatesHostedService rates updated.");    
@@ -108,3 +105,22 @@ namespace CodeCanvas.HostedServices
 
 	}
 }
+
+// Update entity  Entity.Update(ratesToAdd.Rate)
+
+
+
+//ratesDatabase
+//    .ToList()
+//    .ForEach(x =>
+//    {
+//        var record = ratesDatabase.First(y => ratesToAdd.Any(rate => rate.CurrencyCode != null && rate.CurrencyCode == y.CurrencyCode));
+//        x.Update(record.Rate);
+//    });
+
+// Update Database
+
+//scopedRepositoryService.UpdateRates(
+//    ratesDatabase.Where(x => ratesToAdd.Any(y => y != null
+//                                              && y.CurrencyCode != null
+//                                              && y.CurrencyCode.Equals(x.CurrencyCode))));

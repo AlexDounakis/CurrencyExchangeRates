@@ -23,21 +23,21 @@ namespace CodeCanvas.ExchangeRateStrategies
 
         protected override async Task<decimal> GetRate(string currencyCodeFrom, string currencyCodeTo, DateTime date)
         {
+            var rateFrom = await _repository.GetRateByCondition(DateTime.Today.AddDays(3), currencyCodeFrom);
+            var rateTo = await _repository.GetRateByCondition(DateTime.Today.AddDays(3), currencyCodeTo);
             
-            var ratesByDay = await _repository.GetRatesByCondition(date, currencyCodeFrom);
-            if (ratesByDay.Count() == 0)
+            if (rateFrom ==null || rateTo ==null)
             {
-                date = date.AddDays(1);
-                ratesByDay = await _repository.GetRatesByCondition(date, currencyCodeFrom);
-                if (ratesByDay.Count() == 0)
-                    return System.Convert.ToDecimal(-1);  //return 404 ,  throw exception
+                var sortedRatesByDate = await _repository.GetNextAvailableRateAsync();
+                var nextAvailableDate = sortedRatesByDate.First();
+                rateFrom = await _repository.GetRateByCondition(nextAvailableDate.CreatedAt, currencyCodeFrom);
+                rateTo = await _repository.GetRateByCondition(nextAvailableDate.CreatedAt, currencyCodeTo);
+                if (rateFrom == null || rateTo == null)
+                    throw new Exception("Rate For Specific Date Not Found...");  //return 404 ,  
             }
-            var rate = ratesByDay.Where(x => x.Rate.Equals(currencyCodeFrom)).FirstOrDefault();
-            if (rate != null)
-                return rate.Rate;
-            else
-                return System.Convert.ToDecimal(-1);// throw exception 
 
+            var finalRate = System.Convert.ToDecimal(rateTo.Rate / rateFrom.Rate);
+            return finalRate;
         }
     }
 }

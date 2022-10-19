@@ -25,7 +25,7 @@ namespace CodeCanvas.Services
 			_strategyB = _specificDateOrNextAvailableRateStrategy;
 			_wallet = wallet;
 		}
-		public async Task<decimal> AdjustBalance(string exchangeRateStrategy, int walletId, string currencyCode, decimal amount)
+		public async Task<decimal> AdjustBalance(string exchangeRateStrategy, int walletId, string currencyCodeRequest, decimal amount)
 		{
 			// todo: implement WalletAdjustmentService.AdjustBalance()
 
@@ -34,20 +34,24 @@ namespace CodeCanvas.Services
             if (wallet == null)
 				throw new System.Exception("Wallet not found");
 			
-			var currencyCodeTo = wallet.CurrencyCode;
+			var currencyCodeWallet = wallet.CurrencyCode;
 
             // choose the corresponding IExchangeRateStrategy based on exchangeRateStrategy
             // use IExchangeRateStrategy.Convert() to convert the amount into the currency of the wallet
-            decimal result = 0;
-			switch (exchangeRateStrategy)
+            decimal result = amount;
+			if(currencyCodeRequest != currencyCodeWallet)
 			{
-				case "A":
-					result = await _strategyA.Convert(amount ,currencyCode ,currencyCodeTo , DateTime.Today);
-					break;
-				case "B":
-                    result = await _strategyB.Convert(amount, currencyCode, currencyCodeTo, DateTime.Today);
-                    break;
-			}
+                switch (exchangeRateStrategy)
+                {
+                    case "A":
+                        result = await _strategyA.Convert(amount, currencyCodeRequest, currencyCodeWallet, DateTime.Today);
+                        break;
+                    case "B":
+                        result = await _strategyB.Convert(amount, currencyCodeRequest, currencyCodeWallet, DateTime.Today);
+                        break;
+                }
+            }
+			
 
 			// bring WalletEntity and call Adjust() to adjust the balance
 			try {
